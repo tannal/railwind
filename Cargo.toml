@@ -5,7 +5,7 @@ edition = "2024"
 
 [dependencies]
 wit-bindgen-rt = { version = "0.44.0", features = ["bitflags"] }
-cssparser = { version = "0.38.0", default-features = false }
+# cssparser = { version = "0.38.0", default-features = false }
 
 [lib]
 crate-type = ["cdylib"]

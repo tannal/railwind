@@ -9,6 +9,7 @@ mod matcher;
 mod theme;
 
 use crate::bindings::servo::tailwind::console;
+// use crate::bindings::servo::dom::console;
 use bindings::exports::servo::tailwind::compiler::Guest;
 use std::collections::HashSet;
 
@@ -16,38 +17,29 @@ struct Component;
 
 impl Guest for Component {
     fn compile_classes(classes: String) -> String {
-        let mut out = String::new();
-        let mut seen = HashSet::new();
-
-        for token in classes.split_whitespace() {
-            if seen.insert(token) {
-                if let Some(css) = matcher::match_utility(token) {
-                    out.push_str(&matcher::serialize_class_rule(token, &css));
-                }
-            }
-        }
-
-        out
+        let candidates: Vec<String> = classes.split_whitespace().map(|s| s.to_string()).collect();
+        Self::compile_candidates(candidates)
     }
 
     fn compile_candidates(candidates: Vec<String>) -> String {
         console::log(&format!(
-            "railwind received {} candidates: {:?}",
+            "railwind received {} candidates: {:?}\n",
             candidates.len(),
             candidates
         ));
-        let mut out = String::new();
         let mut seen = HashSet::new();
-
-        for token in candidates {
-            if seen.insert(token.clone()) {
-                if let Some(css) = matcher::match_utility(&token) {
-                    out.push_str(&matcher::serialize_class_rule(&token, &css));
+        let mut out = String::with_capacity(candidates.len() * 64);
+        for candidate in &candidates {
+            for token in candidate.split_whitespace() {
+                if seen.insert(token) {
+                    if let Some(css) = matcher::parse_candidate(token) {
+                        out.push_str(&css);
+                    }
                 }
             }
         }
         console::log(&format!(
-            "railwind output {} length css: {:?}",
+            "railwind output {} length css: {:?}\n",
             out.len(),
             out
         ));
