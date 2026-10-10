@@ -1,0 +1,20 @@
+[package]
+name = "railwind"
+version = "0.1.0"
+edition = "2024"
+
+[dependencies]
+wit-bindgen-rt = { version = "0.44.0", features = ["bitflags"] }
+cssparser = { version = "0.38.0", default-features = false }
+
+[lib]
+crate-type = ["cdylib"]
+
+[package.metadata.component]
+package = "component:railwind"
+
+[package.metadata.component.dependencies]
+
+[package.metadata.component.target]
+path = "wit"
+world = "railwind"
